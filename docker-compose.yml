@@ -3,19 +3,43 @@ version: '3'
 services:
 ###> doctrine/doctrine-bundle ###
   database:
-    image: postgres:${POSTGRES_VERSION:-13}-alpine
+    image: mariadb:latest
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-app}
-      # You should definitely change the password in production
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ChangeMe}
-      POSTGRES_USER: ${POSTGRES_USER:-symfony}
-    volumes:
-      - db-data:/var/lib/postgresql/data:rw
+      MYSQL_DATABASE: root
+      MYSQL_ROOT_PASSWORD: root
       # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
       # - ./docker/db/data:/var/lib/postgresql/data:rw
 ###< doctrine/doctrine-bundle ###
 
-volumes:
-###> doctrine/doctrine-bundle ###
-  db-data:
-###< doctrine/doctrine-bundle ###
+###> symfony/mailer ###
+  mailer:
+    image: schickling/mailcatcher
+    ports: [ 1025, 1080 ]
+###< symfony/mailer ###
+
+
+  php:
+    build: docker/php8-fpm
+    env_file: ./.env
+    volumes:
+      - ./:/var/www/symfony:cached
+    links:
+      - database:db
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - 8080:80
+    links:
+      - database:db
+  nginx:
+    build: docker/nginx
+    ports:
+      - 80:80
+    volumes_from:
+      - php
+  node:
+    image: node:16.13.1
+    volumes:
+      - ./:/var/www/symfony
+    working_dir: /var/www/symfony
+    command: yarn watch
