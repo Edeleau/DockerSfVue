@@ -15,7 +15,6 @@ watch:
 up:
 	$(DOCKER) compose up -d
 init:
-	make up
 	docker compose run --rm --no-deps $(FRONT) bash -ci 'yarn install'
 	docker compose up -d
 	make install
