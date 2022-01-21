@@ -16,7 +16,7 @@
         "build": "encore production --progress"
     },
     "dependencies": {
-        "vue": "^2.5",
+        "vue": "^3",
         "vue-loader": "^15.9.5",
         "vue-template-compiler": "^2.6.14"
     }
