@@ -1,12 +1,14 @@
 DOCKER = docker compose exec
+BACKEND = php
+FRONT = node
 
 install:
-	$(DOCKER) php composer install
+	$(DOCKER) $(BACKEND) composer install
 update:
-	$(DOCKER) php composer update
+	$(DOCKER) $(BACKEND) composer update
 %:
-	$(DOCKER) php php bin/console make:$@
+	$(DOCKER) $(BACKEND) php bin/console make:$@
 watch:
-	$(DOCKER) node yarn encore dev --watch
+	$(DOCKER) $(FRONT) yarn encore dev --watch
 
 	
